@@ -1,5 +1,9 @@
 {% if session.username %}
 <p>Olet kirjautunut nimellä {{ session.username }}</p>
+<p>Haluatko tarkastella keskusteluja:<a
+href="/aiheet">Keskustelut</a></p>
+<p>Haluatko lisätä uuden keskustelun aiheen:<a
+href="/viestit">Uusi aihe</a></p>
 <a href="/logout">Kirjaudu ulos</a>
 {% else %}
 <form action="/login" method="POST">
