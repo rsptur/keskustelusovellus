@@ -1,0 +1,14 @@
+<title>Viestit</title>
+<hr>
+<ul>
+<h1>Viestien aiheet</h1>
+{% for ttopic in ttopics %}
+<li><a href="/topic/{{ ttopic[0] }}">{{ ttopic[0] }}</a>
+{% endfor %}
+</ul>
+<p>Viestien määrä<p>
+{{count}}
+<hr>
+<p>Lisää uusi viestiketju:<a
+href="/viestit">Uusi keskustelu</a></p>
+</ul>
