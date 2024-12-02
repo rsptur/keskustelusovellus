@@ -28,7 +28,11 @@ def new():
     if request.method=="POST": 
         username = request.form["username"]
         password = request.form["password"]
-        if users.new_user(username,password): 
+        if len(username)<1: 
+            return render_template("error.html", message="Käyttäjätunnus puuttuu tai on liian lyhyt")
+        if len(password)<1: 
+            return render_template("error.html", message="Salasana puuttuu tai on liian lyhyt")
+        elif users.new_user(username,password): 
             return redirect("/")
         else: 
             return render_template("error.html", message="Käyttäjätunnusta ei voitu luoda")
@@ -41,8 +45,7 @@ def logout():
 @app.route("/aiheet")
 def topiclist():
     result=topics.list_topics() 
-    number=topics.number_messages()
-    return render_template("form.html", count=len(result),ttopics=result,nro=number)
+    return render_template("form.html", count=len(result),ttopics=result)
 
 @app.route("/viestit",methods=["GET","POST"])
 def messages():
