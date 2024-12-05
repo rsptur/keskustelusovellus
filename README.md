@@ -11,6 +11,7 @@ Käyttäjä näkee alueen ketjujen viestit ja viestien määrän.
 Käyttäjä voi luoda alueelle uuden ketjun antamalla ketjun otsikon ja aloitusviestin sisällön.
 Käyttäjä voi kirjoittaa uuden viestin olemassa olevaan ketjuun.
 Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
+Käyttäjä voi myös poistaa ketjun tai viestin.
 
 Tulossa:
 
@@ -18,9 +19,15 @@ Käyttäjä voi nähdä viimeksi lähetetyn viestin ajankohdan.
 
 Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. 
 
-Käyttäjä voi myös poistaa ketjun tai viestin.
-
 Ylläpitäjä voi lisätä ja poistaa keskustelualueita.
 
 Ylläpitäjä voi luoda salaisen alueen ja määrittää, keillä käyttäjillä on pääsy alueelle.
 
+Käyttääksesi sovellusta 
+
+1. Kloonaa repositorio
+2. Mene lataamaasi kansioon ja luo virtuaaliympäristö: 
+python3 -m venv venv
+source venv/bin/activate
+3. Käynnistä sovellus 
+flask run

@@ -1,6 +1,22 @@
 <title>Viestisi</title>
 <h1>Lähettämäsi viestit</h1>
 {% for topic in topics %}
-<li> {{topic[0]}}
+<br> {{topic[0]}}.Viesti:{{topic[1]}}  Aihe:{{topic[2]}}
 {% endfor %}
 </ul>
+
+<h2>Syötä viestin numero jonka haluat poistaa</h2>
+<form action="/muokkaa" method="POST">
+<input type="integer" name="viestinro">
+<br>
+<input type="submit" value="Syötä numero">
+</form>
+<form action="/viestit" method="POST">
+Kirjoita viestin uusi aihe:
+<input type="text" name="topic">
+<br>
+Kirjoita uusi viesti:
+<input type="text" name="message">
+<br>
+<input type="submit" value="Lähetä">
+</form>

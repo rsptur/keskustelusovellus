@@ -41,15 +41,25 @@ def new_topic(message,topic):
     except: 
         return False  
     
-def modify_messages(username):
+def show_messages(username):
     try: 
-        sql = text("SELECT user_id FROM users WHERE username=:username")
+        sql = text("SELECT id FROM users WHERE username=:username")
         result=db.session.execute(sql,{"username":username})
-        #sql = text("SELECT messages,topic FROM messages WHERE user_id=:user_id")
-        #result=db.session.execute(sql, {"user_id":user_id})
-        return result.fetchone()
+        user=result.fetchone()
+        sql = text("SELECT id,message,topic FROM messages WHERE id=:user_id")
+        result=db.session.execute(sql, {"user_id":user[0]})
+        return result.fetchall()
     except: 
-        return False     
+        return False  
+
+def modify_messages(message_id):
+    try: 
+        sql = text("DELETE FROM messages WHERE id=:message_id")
+        result=db.session.execute(sql,{"message_id":message_id})
+        db.session.commit()
+        return True
+    except: 
+        return False    
     
 
 

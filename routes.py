@@ -81,10 +81,14 @@ def search():
 def modify():  
     if "username" in session:
         if request.method=="GET": 
-            result=topics.modify_messages(session["username"])
+            result=topics.show_messages(session["username"])
             return render_template("user_messages.html",topics=result)
         if request.method=="POST":
-            pass
-
+            message_id= request.form["viestinro"]
+            if topics.modify_messages(message_id):
+                result=topics.show_messages(session["username"])
+                return render_template("user_messages.html",topics=result)
+            else: 
+                return "Viestiä ei löytynyt tai ei voitu muokata"
 #admin can delete any
 #@app.route("/admin")
