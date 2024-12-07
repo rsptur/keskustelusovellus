@@ -5,17 +5,22 @@ Sovelluksessa näkyy keskustelualueita, joista jokaisella on tietty aihe. Alueil
 Sovelluksen ominaisuuksia:
 
 Toimii: 
+
 Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
+
 Käyttäjä näkee sovelluksen etusivulla listan alueista.
-Käyttäjä näkee alueen ketjujen viestit ja viestien määrän. 
+
+Käyttäjä näkee alueen ketjujen viestit, viestien määrän ja viimeksi lähetetyn viestin ajankohdan. 
+
 Käyttäjä voi luoda alueelle uuden ketjun antamalla ketjun otsikon ja aloitusviestin sisällön.
+
 Käyttäjä voi kirjoittaa uuden viestin olemassa olevaan ketjuun.
+
 Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
+
 Käyttäjä voi myös poistaa ketjun tai viestin.
 
 Tulossa:
-
-Käyttäjä voi nähdä viimeksi lähetetyn viestin ajankohdan.
 
 Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. 
 
