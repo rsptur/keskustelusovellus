@@ -31,8 +31,16 @@ Ylläpitäjä voi luoda salaisen alueen ja määrittää, keillä käyttäjillä
 Käyttääksesi sovellusta 
 
 1. Kloonaa repositorio
+
 2. Mene lataamaasi kansioon ja luo virtuaaliympäristö: 
+```
 python3 -m venv venv
+```
+```
 source venv/bin/activate
+```
+
 3. Käynnistä sovellus 
+```
 flask run
+```
