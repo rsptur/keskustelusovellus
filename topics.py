@@ -22,19 +22,19 @@ def list_messages(topic):
     except: 
         return False 
 
-#Hakee aiheen viimeisimmät viestit
+#Hakee aiheen viimeisimmän viestin ajan
 def most_recent(topic): 
     try: 
-        sql = text("SELECT MAX(sent_at) FROM messages WHERE topic=:topic")
-        result=db.session.execute(sql,{"sent_at":sent_at})  
-        return result.fetchone() 
+        sql = text("SELECT TO_CHAR(MAX(sent_at), 'YYYY-MM-DD') FROM messages WHERE topic=:topic")
+        result=db.session.execute(sql,{"topic":topic})  
+        return result.fetchall() 
     except: 
         return False 
 
 ## Tallentaa viestin messages tauluun
 def new_topic(message,topic): 
     try: 
-        sql = text("INSERT INTO messages (message,topic) VALUES (:message,:topic)")
+        sql = text("INSERT INTO messages (message,topic,sent_at) VALUES (:message,:topic,current_timestamp)")
         db.session.execute(sql, {"message":message,"topic":topic})
         db.session.commit()  
         return True  

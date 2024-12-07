@@ -58,13 +58,13 @@ def messages():
         else: 
             return render_template("error.html", message="Viestiä ei voitu lähettää")
 
-
 @app.route("/topic/<string:topic>")
 def viestilista(topic): 
     result=topics.list_messages(topic)
     result2=len(result)
     result3=topics.most_recent(topic)
-    return render_template("topic.html",topics=result, count=result2, time=result3)
+    result3=result3[-1][0]
+    return render_template("topic.html",topics=result, count=result2,time=result3)
 
 @app.route("/etsi",methods=["GET","POST"])
 def search(): 
@@ -72,7 +72,8 @@ def search():
         return render_template("search_messages.html")
     if request.method=="POST":
         query= request.form["query"]
-        sql=text("SELECT message FROM messages")
+        #query= request.args["query"]
+        sql=text("SELECT message FROM messages WHERE message like (:query)")
         result = db.session.execute(sql, {"query":"%"+query+"%"})
         found = result.fetchall()
         return render_template("search_results.html",topics=found)
@@ -89,6 +90,7 @@ def modify():
                 result=topics.show_messages(session["username"])
                 return render_template("user_messages.html",topics=result)
             else: 
-                return "Viestiä ei löytynyt tai ei voitu muokata"
+                return "Viestiä ei löytynyt tai ei voitu poistaa"
+
 #admin can delete any
 #@app.route("/admin")
