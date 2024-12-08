@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
-    username TEXT, 
+    username UNIQUE TEXT, 
     password TEXT);  
 
 CREATE TABLE messages (

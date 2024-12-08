@@ -29,8 +29,12 @@ def new():
         password = request.form["password"]
         if len(username)<1: 
             return render_template("error.html", message="Käyttäjätunnus puuttuu tai on liian lyhyt")
+        if len(username)>100: 
+            return render_template("error.html", message="Käyttäjätunnus on liian pitkä")
         if len(password)<1: 
             return render_template("error.html", message="Salasana puuttuu tai on liian lyhyt")
+        if len(password)>100: 
+            return render_template("error.html", message="Salasana on liian pitkä")
         elif users.new_user(username,password): 
             return redirect("/")
         else: 
@@ -72,7 +76,6 @@ def search():
         return render_template("search_messages.html")
     if request.method=="POST":
         query= request.form["query"]
-        #query= request.args["query"]
         sql=text("SELECT message FROM messages WHERE message like (:query)")
         result = db.session.execute(sql, {"query":"%"+query+"%"})
         found = result.fetchall()

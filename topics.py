@@ -12,6 +12,7 @@ def list_topics():
         return result.fetchall()
     except: 
         return False 
+    
 
 #Hakee viestit aiheen mukaan
 def list_messages(topic): 
