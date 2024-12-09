@@ -1,0 +1,5 @@
+<form action="/add_admin" method="POST">
+<p>Hae ylläpitäjäksi:<br>
+<input type="submit" value="Hae">
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>

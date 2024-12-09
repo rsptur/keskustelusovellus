@@ -10,3 +10,8 @@ CREATE TABLE messages (
     sent_at TIMESTAMP,
     user_id INTEGER REFERENCES users,
     topic_id INTEGER REFERENCES topics); 
+
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    username UNIQUE TEXT,
+    user_id INTEGER REFERENCES users);

@@ -1,11 +1,12 @@
 <title>Viestit</title>
-<h1>Kaikki viestit</h1>
+<h1>Viestit</h1>
 {% for topic in topics %}
 <br>Numero: {{topic[0]}}. Viesti:{{topic[1]}}  Aihe:{{topic[2]}} Lähetetty:{{topic[3]}}
 {% endfor %}
 </ul>
+
 <h2>Syötä viestin numero jonka haluat poistaa</h2>
-<form action="/modify" method="POST">
+<form action="/admin" method="POST">
 <input type="integer" name="number">
 <br>
 <input type="submit" value="Syötä numero">

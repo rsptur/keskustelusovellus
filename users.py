@@ -25,4 +25,24 @@ def new_user(username,password):
         db.session.commit()    
     except: 
         return False
-    return login_user(username,password)    
+    return login_user(username,password)   
+
+def add_admin(username): 
+    try: 
+        sql = text("INSERT INTO admin (username) VALUES (:username)")      
+        db.session.execute(sql, {"username":username})
+        db.session.commit() 
+    except: 
+        return False 
+
+def is_admin(username):
+    sql = text("SELECT username FROM admin WHERE username = :username")
+    result = db.session.execute(sql, {"username":username})
+    user = result.fetchall() 
+    if len(user)>=1: 
+        return True
+    if len(user)==0: 
+        return False 
+
+def is_users(message_id,username):
+    return True
