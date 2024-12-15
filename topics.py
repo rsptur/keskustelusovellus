@@ -4,13 +4,13 @@ from app import app
 import users
 from sqlalchemy.sql import text
 
-def new_topic(topic,message): 
+def new_topic(topic,message,user_id): 
     try: 
         sql = text("INSERT INTO topics (topic,user_id) VALUES (:topic,:user_id)")
-        db.session.execute(sql, {"topic":topic, "user_id":session['user_id']})
+        db.session.execute(sql, {"topic":topic, "user_id":user_id})
         db.session.commit()  
         topic_id=get_topic_id(topic)
-        if new_message(message,topic_id): 
+        if new_message(message,topic_id,user_id): 
             return True  
     except: 
         return False  
@@ -32,7 +32,7 @@ def get_topic_id(topic):
     except: 
         False
 
-def new_message(message,topic_id): 
+def new_message(message,topic_id,user_id): 
     try:
         visible=True
         sql = text("INSERT INTO messages (message,sent_at,visible, user_id,topic_id) VALUES (:message,current_timestamp,:visible,:user_id,:topic_id)")
@@ -106,7 +106,7 @@ def users_messages(user_id):
         return False
 
 def list_areas():
-    sql = text("SELECT area FROM areas")
+    sql = text("SELECT id,area FROM areas")
     result=db.session.execute(sql)  
     return result.fetchall()     
 
@@ -128,3 +128,11 @@ def list_smessages(id):
     except: 
         return False
     
+def add_smessage(smessage, area, user_id):
+    #try: 
+        sql = text("INSERT INTO smessages (smessage, user_id,area_id) VALUES (:smessage,:user_id,:area_id)")
+        db.session.execute(sql, {"smessage":smessage,"user_id":user_id,"area_id":area})
+        db.session.commit()  
+        return True  
+    #except: 
+        #return False

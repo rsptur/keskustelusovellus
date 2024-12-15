@@ -5,16 +5,16 @@
 {% endfor %}
 <title>Uusi viesti</title>
 <form action="/add_smessage" method="POST">
-    Kirjoita uusi viesti:
+    Lisää viesti alueelle: 
     <input type="text" name="smessage">
     <br>
     <input type="submit" value="Lähetä">
-    <input type="hidden" name="topic" value="{{headline}}">
+    <input type="hidden" name="area" value="{{headline}}">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     </form>
     <title>Uusi käyttäjä alueelle</title>
 <form action="/add_vip" method="POST">
-        Anna käyttäjän id:
+        Lisää käyttäjä alueelle. Anna id:
         <input type="text" name="user_id">
         <br>
         <input type="submit" value="Lähetä">
