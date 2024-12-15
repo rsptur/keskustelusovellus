@@ -35,13 +35,13 @@ def new():
     if request.method=="POST": 
         username = request.form["username"]
         password = request.form["password"]       
-        while len(username)<1: 
+        if len(username)<1: 
             return render_template("error.html", message="Käyttäjätunnus puuttuu tai on liian lyhyt")
-        while len(username)>100: 
+        elif len(username)>100: 
             return render_template("error.html", message="Käyttäjätunnus on liian pitkä")
-        while len(password)<1: 
+        elif len(password)<1: 
             return render_template("error.html", message="Salasana puuttuu tai on liian lyhyt")
-        while len(password)>100: 
+        elif len(password)>100: 
             return render_template("error.html", message="Salasana on liian pitkä")       
         if users.new_user(username,password): 
             return redirect("/")
@@ -63,14 +63,14 @@ def new_topic():
         topic = request.form["topic"]
         message = request.form["message"]
         user_id=session["user_id"]
-        while len(topic)<1: 
-            render_template("error.html", message="Aihe puuttuu")
-        while len(topic)>5000: 
-            render_template("error.html", message="Aiheesi on liian pitkä")
-        while len(message)<1: 
-            render_template("error.html", message="Viesti puuttuu")
-        while len(message)>5000: 
-            render_template("error.html", message="Viestisi on liian pitkä")
+        if len(topic)<1: 
+            return render_template("error.html", message="Aihe puuttuu")
+        if len(topic)>5000: 
+            return render_template("error.html", message="Aiheesi on liian pitkä")
+        if len(message)<1: 
+            return render_template("error.html", message="Viesti puuttuu")
+        if len(message)>5000: 
+            return render_template("error.html", message="Viestisi on liian pitkä")
         if topics.new_topic(topic,message,user_id):
             return redirect("/topics")
         else: 
@@ -95,14 +95,14 @@ def messages():
         topic = request.form["topic"]
         message = request.form["message"]
         user_id=session["user_id"] 
-        while len(message)<1: 
-            render_template("error.html", message="Viesti on liian lyhyt")
-        while len(message)>5000: 
-            render_template("error.html", message="Viesti on liian pitkä")
-        while len(topic)<1: 
-            render_template("error.html", message="Aiheesi on liian lyhyt")
-        while len(topic)>5000: 
-            render_template("error.html", message="Aiheesi on liian pitkä")
+        if len(message)<1: 
+            return render_template("error.html", message="Viesti on liian lyhyt")
+        if len(message)>5000: 
+            return render_template("error.html", message="Viesti on liian pitkä")
+        if len(topic)<1: 
+            return render_template("error.html", message="Aiheesi on liian lyhyt")
+        if len(topic)>5000: 
+            return render_template("error.html", message="Aiheesi on liian pitkä")
         topic_id=topics.get_topic_id(topic) 
         if topics.new_message(message,topic_id,user_id):
             return redirect("/topics")
@@ -115,8 +115,8 @@ def search():
         return render_template("search_messages.html")
     if request.method=="POST":
         query= request.form["query"]
-        while len(query)<1: 
-            render_template("error.html", message="Hakukenttä ei voi olla tyhjä")
+        if len(query)<1: 
+            return render_template("error.html", message="Hakukenttä ei voi olla tyhjä")
         sql=text("SELECT message FROM messages WHERE message like (:query)")
         result = db.session.execute(sql, {"query":"%"+query+"%"})
         found = result.fetchall()
@@ -151,7 +151,7 @@ def admin_page():
                     abort(403)
                 message_id= request.form["number"]
                 while len(message_id)<1: 
-                    render_template("error.html", message="Kenttä ei voi olla tyhjä")
+                    return render_template("error.html", message="Kenttä ei voi olla tyhjä")
                 if topics.modify_messages(message_id, session["user_id"]):
                     result=topics.admin_messages(session["user_id"])
                     return render_template("admin.html",topics=result)  
@@ -168,8 +168,8 @@ def delete_topics():
             if session["csrf_token"] != request.form["csrf_token"]:
                 abort(403)
             topic_id= request.form["number"]
-            while len(topic_id)<1: 
-                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if len(topic_id)<1: 
+                return render_template("error.html", message="Kenttä ei voi olla tyhjä")
             if topics.delete_topics(topic_id, session["user_id"]):
                 result=topics.admin_topics(session["user_id"])
                 return render_template("admin_topics.html",topics=result)  
@@ -186,8 +186,8 @@ def user_page():
             if session["csrf_token"] != request.form["csrf_token"]:
                 abort(403)
             message_id= request.form["number"]
-            while len(message_id)<1: 
-                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if len(message_id)<1: 
+                return render_template("error.html", message="Kenttä ei voi olla tyhjä")
             if topics.modify_messages(message_id,session["user_id"]):
                 result=topics.users_messages(session["user_id"]) 
                 return render_template("user_messages.html",topics=result)  
@@ -202,8 +202,8 @@ def area_add():
     if request.method=="POST":
         if request.method=="POST":
             area= request.form["area"]
-            while len(area)<1: 
-                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if len(area)<1: 
+                return render_template("error.html", message="Kenttä ei voi olla tyhjä")
             if topics.add_area(area, session["user_id"]):
                 result=topics.list_areas()
                 return render_template("add_area.html",topics=result)  
@@ -229,10 +229,10 @@ def smessage_add():
         abort(403)
     smessage= request.form["smessage"]
     area= request.form["area"]
-    while len(smessage)<1: 
-        render_template("error.html", message="Kenttä ei voi olla tyhjä")
-    while len(smessage)>5000: 
-        render_template("error.html", message="Viestisi on liian pitkä")
+    if len(smessage)<1: 
+        return render_template("error.html", message="Kenttä ei voi olla tyhjä")
+    if len(smessage)>5000: 
+        return render_template("error.html", message="Viestisi on liian pitkä")
     if users.is_admin(session["user_id"]):
         if topics.add_smessage(smessage, area, session["user_id"]):
             return redirect("/add_area")  
@@ -248,8 +248,8 @@ def vip_add():
         abort(403)
     user_id= request.form["user_id"]
     area= request.form["topic"]    
-    while len(user_id)<1: 
-        render_template("error.html", message="Kenttä ei voi olla tyhjä")
+    if len(user_id)<1: 
+        return render_template("error.html", message="Kenttä ei voi olla tyhjä")
     if users.is_admin(session["user_id"]):    
         if users.add_vip(user_id, area):
             result=topics.list_areas()
