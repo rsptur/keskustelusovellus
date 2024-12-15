@@ -1,11 +1,18 @@
-<h1>Viestiketju</h1>
+<h1>Viestiketju:{{headline}}</h1>
 <ul>
-<p>Viestien määrä: {{count}}<p>
-<p>Viimeisin viesti: {{time}}<p>
 {% for topic in topics %}
 <p>{{topic[0]}}<p>
 {% endfor %}
-<a href="/modify">Poista viesti</a>
+<title>Uusi viesti</title>
+<form action="/add_message" method="POST">
+    Kirjoita uusi viesti:
+    <input type="text" name="message">
+    <br>
+    <input type="submit" value="Lähetä">
+    <input type="hidden" name="topic" value="{{headline}}">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    </form>
+<a href="/modify">Poista viestejäsi</a>
 <a href="/logout">Kirjaudu ulos</a>
 </p>
 <a href="/">Takaisin</a>

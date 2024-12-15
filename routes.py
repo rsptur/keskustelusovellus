@@ -16,11 +16,15 @@ def login():
     username = request.form["username"]
     password = request.form["password"]
     if users.login_user(username,password): 
+        user_id=users.get_user_id(username)
+        session["user_id"] = user_id
+        print(user_id)
+        session["username"] = username
         session["csrf_token"] = secrets.token_hex(16)
         return redirect("/")
     else: 
-        return "Väärä salasana tai et ole vielä rekisteröitynyt"
-    
+        render_template("error.html", message="Väärä salasana tai et ole vielä rekisteröitynyt")
+
 @app.route("/new",methods=["GET","POST"])
 def new(): 
     if request.method=="GET": 
@@ -28,14 +32,14 @@ def new():
     if request.method=="POST": 
         username = request.form["username"]
         password = request.form["password"]
-        if len(username)<1: 
+        while len(username)<1: 
             return render_template("error.html", message="Käyttäjätunnus puuttuu tai on liian lyhyt")
-        if len(username)>100: 
+        while len(username)>100: 
             return render_template("error.html", message="Käyttäjätunnus on liian pitkä")
-        if len(password)<1: 
+        while len(password)<1: 
             return render_template("error.html", message="Salasana puuttuu tai on liian lyhyt")
-        if len(password)>100: 
-            return render_template("error.html", message="Salasana on liian pitkä")
+        while len(password)>100: 
+            return render_template("error.html", message="Salasana on liian pitkä")       
         elif users.new_user(username,password): 
             return redirect("/")
         else: 
@@ -46,43 +50,64 @@ def logout():
     del session["username"]
     return redirect("/")
 
-@app.route("/topics")
-def topiclist(): 
-    result=topics.list_topics() 
-    return render_template("form.html", count=len(result),topics=result)
-
-@app.route("/viestit",methods=["GET","POST"])
-def messages():
+@app.route("/add_topic",methods=["GET","POST"])
+def new_topic():
     if request.method=="GET": 
-        return render_template("write.html")
+        return render_template("addtopic.html")
     if request.method=="POST": 
         if session["csrf_token"] != request.form["csrf_token"]:
             abort(403)
         topic = request.form["topic"]
         message = request.form["message"]
+        while len(topic)<1: 
+            render_template("error.html", message="Aiheesi on liian lyhyt")
         while len(topic)>5000: 
             render_template("error.html", message="Aiheesi on liian pitkä")
+        if topics.new_topic(topic,message):
+            return redirect("/topics")
+        else: 
+            return render_template("error.html", message="Aihetta ei voitu tallentaa")
+
+@app.route("/topics")
+def topiclist(): 
+    result=topics.list_topics() 
+    return render_template("form.html", count=len(result),topics=result)
+
+@app.route("/topic/<string:topic>")
+def all_topics(topic): 
+    topic_id=topics.get_topic_id(topic)
+    result=topics.list_messages(topic_id)
+    return render_template("topic.html",topics=result,headline=topic)
+
+@app.route("/add_message",methods=["POST"])
+def messages():
+    if request.method=="POST": 
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        topic = request.form["topic"]
+        message = request.form["message"]
+        while len(message)<1: 
+            render_template("error.html", message="Viesti on liian lyhyt")
         while len(message)>5000: 
             render_template("error.html", message="Viesti on liian pitkä")
-        if topics.new_topic(message,topic):
+        while len(topic)<1: 
+            render_template("error.html", message="Aiheesi on liian lyhyt")
+        while len(topic)>5000: 
+            render_template("error.html", message="Aiheesi on liian pitkä")
+        topic_id=topics.get_topic_id(topic) 
+        if topics.new_message(message,topic_id):
             return redirect("/topics")
         else: 
             return render_template("error.html", message="Viestiä ei voitu lähettää")
 
-@app.route("/topic/<string:topic>")
-def viestilista(topic): 
-    result=topics.list_messages(topic)
-    result2=len(result)
-    result3=topics.most_recent(topic)
-    result3=result3[-1][0]
-    return render_template("topic.html",topics=result, count=result2,time=result3)
-
-@app.route("/etsi",methods=["GET","POST"])
+@app.route("/search",methods=["GET","POST"])
 def search(): 
     if request.method=="GET": 
         return render_template("search_messages.html")
     if request.method=="POST":
         query= request.form["query"]
+        while len(query)<1: 
+            render_template("error.html", message="Hakukenttä ei voi olla tyhjä")
         sql=text("SELECT message FROM messages WHERE message like (:query)")
         result = db.session.execute(sql, {"query":"%"+query+"%"})
         found = result.fetchall()
@@ -93,41 +118,135 @@ def register_admin():
     if request.method=="GET": 
         return render_template("admin_request.html")   
     if request.method=="POST": 
-        user=session["username"]
-        if users.add_admin(user): 
-            return redirect("/")
+        if session["csrf_token"] != request.form["csrf_token"]:
+            abort(403)
+        if users.add_admin(session["user_id"]): 
+            return redirect("/admin")
         else: 
             return render_template("error.html", message="Ylläpitäjää ei voitu lisätä")
 
 @app.route("/admin",methods=["GET","POST"])    
 def admin_page():
+    allow = False
+    if users.is_admin(session["user_id"]):
+        allow = True
+    if not allow:
+        return render_template("error.html", error="Ei oikeutta nähdä sivua")
+    if allow:
+        if request.method=="GET":
+            result=topics.admin_messages(session["user_id"])             
+            return render_template("admin.html",topics=result)   
+        if request.method=="POST":
+            if request.method=="POST":
+                if session["csrf_token"] != request.form["csrf_token"]:
+                    abort(403)
+                message_id= request.form["number"]
+                while len(message_id)<1: 
+                    render_template("error.html", message="Kenttä ei voi olla tyhjä")
+                if topics.modify_messages(message_id, session["user_id"]):
+                    result=topics.admin_messages(session["user_id"])
+                    return render_template("admin.html",topics=result)  
+                else: 
+                    return render_template("error.html", message="Viestiä ei voitu poistaa")      
+
+@app.route("/delete_topics",methods=["GET","POST"])    
+def delete_topics():
     if request.method=="GET":
-        result=topics.admin_messages(session["username"])             
-        return render_template("admin.html",topics=result)   
+        result=topics.admin_topics(session["user_id"])             
+        return render_template("admin_topics.html",topics=result)   
     if request.method=="POST":
         if request.method=="POST":
             if session["csrf_token"] != request.form["csrf_token"]:
                 abort(403)
-            message_id= request.form["number"]
-            if topics.modify_messages(message_id, session["username"]):
-                result=topics.admin_messages()
-                return render_template("admin.html",topics=result)  
+            topic_id= request.form["number"]
+            while len(topic_id)<1: 
+                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if topics.delete_topics(topic_id, session["user_id"]):
+                result=topics.admin_topics(session["user_id"])
+                return render_template("admin_topics.html",topics=result)  
             else: 
-                return render_template("error.html", message="Viestiä ei voitu poistaa")      
+                return render_template("error.html", message="Viestiä ei voitu poistaa")
 
 @app.route("/modify",methods=["GET","POST"])    
 def user_page():
     if request.method=="GET":
-        result=topics.admin_messages()            
+        result=topics.users_messages(session["user_id"])           
         return render_template("user_messages.html",topics=result)   
     if request.method=="POST":
         if request.method=="POST":
             if session["csrf_token"] != request.form["csrf_token"]:
                 abort(403)
             message_id= request.form["number"]
-            if topics.modify_messages(message_id,session["username"]):
-                result=topics.admin_messages()
+            while len(message_id)<1: 
+                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if topics.modify_messages(message_id,session["user_id"]):
+                result=topics.users_messages(session["user_id"]) 
                 return render_template("user_messages.html",topics=result)  
             else: 
                 return render_template("error.html", message="Viestiä ei voitu poistaa")   
-            
+
+@app.route("/add_area",methods=["GET","POST"])
+def area_add():
+    if request.method=="GET":
+        result=topics.list_areas()             
+        return render_template("add_area.html",topics=result)   
+    if request.method=="POST":
+        if request.method=="POST":
+            if session["csrf_token"] != request.form["csrf_token"]:
+                abort(403)
+            area= request.form["area"]
+            while len(area)<1: 
+                render_template("error.html", message="Kenttä ei voi olla tyhjä")
+            if topics.add_area(area, session["user_id"]):
+                result=topics.list_areas()
+                print(result)
+                return render_template("add_area.html",topics=result)  
+            else: 
+                return render_template("error.html", message="Aluetta ei voitu luoda")   
+
+@app.route("/area/<int:id>")
+def area(id):
+    allow = False
+    if users.is_admin(session["user_id"]):
+        allow = True
+    elif users.is_vip(id,session["user_id"]):
+        allow = True
+    if not allow:
+        return render_template("error.html", error="Ei oikeutta nähdä sivua")
+    if allow:
+        result=topics.list_smessages(id) 
+        return render_template("area.html",topics=result,headline=id)
+    
+@app.route("/add_smessage",methods=["POST"])
+def smessage_add():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    smessage= request.form["smessage"]
+    area= request.form["topic"]
+    while len(smessage)<1: 
+        render_template("error.html", message="Kenttä ei voi olla tyhjä")
+    while len(smessage)>5000: 
+        render_template("error.html", message="Viestisi on liian pitkä")
+    if users.is_admin(session["user_id"]):
+        if topics.add_smessage(smessage, area, session["user_id"]):
+            return redirect("/area/{{area}}")  
+    elif users.is_vip(area,session["user_id"]):
+        if topics.add_smessage(smessage, area, session["user_id"]):
+            return redirect("/area/{{area}}")          
+    else: 
+        return render_template("error.html", message="Viestiä ei voitu lähettää")  
+
+@app.route("/add_vip",methods=["POST"])
+def vip_add():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        abort(403)
+    user_id= request.form["user_id"]
+    area= request.form["topic"]    
+    while len(user_id)<1: 
+        render_template("error.html", message="Kenttä ei voi olla tyhjä")
+    if users.is_admin(session["user_id"]):    
+        if topics.add_vip(user_id, area):
+            result=topics.list_areas()
+            return render_template("area.html",topics=result)  
+    else: 
+        return render_template("error.html", message="Käyttäjää ei voitu lisätä")  

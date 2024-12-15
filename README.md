@@ -8,23 +8,17 @@ Toimii:
 
 Käyttäjä voi kirjautua sisään ja ulos sekä luoda uuden tunnuksen.
 
-Käyttäjä näkee sovelluksen etusivulla listan alueista.
+Käyttäjä näkee sovelluksen etusivulla listan alueista, viestien määrän ja viimeksi lähetetyn viestin ajankohdan. 
 
-Käyttäjä näkee alueen ketjujen viestit, viestien määrän ja viimeksi lähetetyn viestin ajankohdan. 
+Käyttäjä näkee alueen ketjujen viestit ja voi lisätä ketjuun viestejä.
 
 Käyttäjä voi uuden ketjun antamalla ketjun otsikon ja aloitusviestin sisällön.
 
-Käyttäjä voi kirjoittaa uuden viestin olemassa olevaan ketjuun.
-
 Käyttäjä voi etsiä kaikki viestit, joiden osana on annettu sana.
 
-Käyttäjä voi poistaa ketjun tai viestin.
+Käyttäjä voi poistaa tarkastella lähettämiään viestejä ja poistaa niitä.
 
 Ylläpitäjä voi lisätä ja poistaa keskustelualueita.
-
-Tulossa:
-
-Käyttäjä voi muokata luomansa ketjun otsikkoa sekä lähettämänsä viestin sisältöä. 
 
 Ylläpitäjä voi luoda salaisen alueen ja määrittää, keillä käyttäjillä on pääsy alueelle.
 

@@ -1,12 +1,12 @@
 {% if session.username %}
 <p>Olet kirjautunut nimellä {{ session.username }}</p>
-<p>Tarkastele aikaisempia keskusteluja:<a
-href="/topics">Keskustelut</a></p>
-<p>Lisätä uusi viesti tai uusi keskustelu aihe:<a
-href="/viestit">Uusi aihe</a></p>
-<a href="/logout">Kirjaudu ulos</a>
-<p>Jos haluat ylläpitäjäksi:<a
-href="/add_admin">Hae</a></p>
+<p>Tarkastele aikaisempia keskusteluja ja lisää niihin viestejä:</p>
+<a href="/topics">Keskustelut</a><p>
+<a href="/add_topic">Lisää uusi aihe ja viesti</a></p>
+<a href="/modify">Poista lähettämiäsi viestejä</a></p>
+<a href="/logout">Kirjaudu ulos</a></p>
+<a href="/add_admin">Hae ylläpitäjäksi</a></p>
+<a href="/admin">Ylläpitäjän sivut</a></p>
 {% else %}
 <form action="/login" method="POST">
 <p>Kirjaudu:<br>

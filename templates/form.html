@@ -3,16 +3,14 @@
 <ul>
 <h1>Viestien aiheet</h1>
 {% for topic in topics %}
-<li><a href="/topic/{{ topic[0] }}">{{ topic[0] }}</a>
+<li><a href="/topic/{{ topic[0] }}">{{ topic[0] }}</a>: Viestien määrä: {{ topic[1] }}, Viimeisin viesti: {{ topic[2] }}
 {% endfor %}
 </ul>
-<p>Viestien määrä<p>
-{{count}}
 <hr>
-<p>Lisää uusi viestiketju:<a
-href="/viestit">Uusi keskustelu</a></p>
+<p>Lisää uusi aihe:<a
+href="/add_topic">Lisää aihe</a></p>
 <p>Etsi viesteistä:<a
-href="/etsi">Etsi viesteistä</a> | <a href="/logout">Kirjaudu ulos</a>
+href="/search">Etsi viesteistä</a> | <a href="/logout">Kirjaudu ulos</a>
 </p>
 </ul>
 <a href="/">Takaisin</a>
