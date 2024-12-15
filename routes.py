@@ -247,12 +247,12 @@ def vip_add():
     if session["csrf_token"] != request.form["csrf_token"]:
         abort(403)
     user_id= request.form["user_id"]
-    area= request.form["topic"]    
+    area= request.form["area"]    
     if len(user_id)<1: 
         return render_template("error.html", message="Kenttä ei voi olla tyhjä")
     if users.is_admin(session["user_id"]):    
         if users.add_vip(user_id, area):
             result=topics.list_areas()
-            return render_template("area.html",topics=result)  
+            return render_template("add_area.html",topics=result)  
     else: 
         return render_template("error.html", message="Käyttäjää ei voitu lisätä")  

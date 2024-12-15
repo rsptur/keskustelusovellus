@@ -66,11 +66,11 @@ def add_vip(user_id,area_id):
         return False 
 
 def is_vip(user_id,id):
-    #try: 
+    try: 
         sql = text("SELECT user_id FROM vip WHERE area_id = :id")
         result = db.session.execute(sql, {"id":id})
         user = result.fetchone()[0]
         if user_id==user: 
             return True
-    #except: 
-        #return False
+    except: 
+        return False
